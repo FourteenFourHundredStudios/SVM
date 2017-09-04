@@ -8,12 +8,10 @@ public class JRouter {
 		this.page=page;
 	}
 	
-	public void get(Request req,Response res){
+	public void request(Request req,Response res){
 		
 	}
 	
-	public void post(Request req,Response res){
-		
-	}
+
 	
 }
