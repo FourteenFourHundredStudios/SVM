@@ -1,5 +1,6 @@
 package com.fourteenfourhundred.jroute;
 
+import java.io.IOException;
 
 public class Main extends JRouteServer{
 
@@ -17,9 +18,19 @@ public class Main extends JRouteServer{
 		System.out.println("Server started on "+ip+":"+port+"!");
 
 		
-		on(new JRouter("login"){			
+		on(new JRouter("echo"){			
 			public void request(Request req,Response res){
-				res.send("hey");
+				res.send(req.getParam(0));
+			}
+		});
+		
+		on(new JRouter("exit"){			
+			public void request(Request req,Response res){				
+				try {
+					req.connection.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		

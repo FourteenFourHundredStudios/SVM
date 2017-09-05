@@ -33,7 +33,7 @@ public class SVM {
 	    
 	    password=obj.get("password").getAsString();
 	    
-	    System.out.println(password);
+	    System.out.println("Settings loaded!");
 	}
 	
 }

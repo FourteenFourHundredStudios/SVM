@@ -54,7 +54,7 @@ public class Response {
 	
 	public void send(String str){
 		try{
-			writer.write(str);
+			writer.write(str+"\n");
 			writer.flush();
 		}catch(Exception e){
 			e.printStackTrace();

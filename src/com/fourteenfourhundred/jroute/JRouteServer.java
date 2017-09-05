@@ -8,6 +8,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import com.fourteenfourhundred.svm.SVM;
+
 
 public class JRouteServer {
 
@@ -19,9 +21,9 @@ public class JRouteServer {
 	
 	public void start(String ip,int port){
 		try{
+			SVM.initSettings();
 			this.port=port;
 			this.ip=ip;
-
 			server = new ServerSocket(port,5,InetAddress.getByName(ip));
 			onServerStart();
 	        while(true){
@@ -55,7 +57,7 @@ public class JRouteServer {
 	    public void respondToRequest(String headers){
 	    	System.out.println(headers);
 	    	try{
-				Request request = new Request(headers);
+				Request request = new Request(headers,socket);
 				Response response = new Response(new OutputStreamWriter(socket.getOutputStream()));
 				for(JRouter router:routers){
 					if(router.page.equals(request.request)){
@@ -68,17 +70,37 @@ public class JRouteServer {
 		}
 	    
 	    public void validation(OutputStreamWriter out,BufferedReader in){
-	    	
+	    	try{
+	    		out.write("\n\nSVM Password: ");
+	    		out.flush();
+	    		String password = in.readLine();
+	    		if(!password.equals(SVM.password)){
+	    			out.write("\n====Invalid Credentials====\n\n");
+	    			out.flush();
+	    			out.close();
+	    			in.close();
+	    		}
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    	}
 	    }
 	     
 	    class action extends Thread{
 	        public void run(){
 	            try{
 	                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-	                validation(new OutputStreamWriter(socket.getOutputStream()),in);
+	                OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream());
+	                
+	                validation(out,in);
+	                
+	                
 	                String line;
+	                out.write("SVM> ");
+	                out.flush();
 	                while((line = in.readLine()) != null){
 	                	 respondToRequest(line);
+	                	 out.write("SVM> ");
+	                	 out.flush();
 	                }
 	            }catch(Exception e){
 	                e.printStackTrace();
